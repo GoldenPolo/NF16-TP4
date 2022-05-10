@@ -36,3 +36,5 @@ t_noeud * rechercher_mot(t_index * index, char * mot);
 int ajouter_noeud(t_index * index, t_noeud * noeud);
 
 //test
+
+//retest
