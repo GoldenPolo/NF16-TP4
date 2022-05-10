@@ -35,8 +35,12 @@ t_noeud * rechercher_mot(t_index * index, char * mot);
 
 int ajouter_noeud(t_index * index, t_noeud * noeud);
 
-//test
+int indexer_fichier(t_index * index, char * filename);
 
-//retest
+void afficher_index(t_index * index);
 
-//fait de la merde
+void afficher_max_apparition(t_index * index);
+
+void afficher_occurences_mot(t_index * index, char * mot);
+
+void construire_texte(t_index * index, char * filename);
