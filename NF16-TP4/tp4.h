@@ -38,3 +38,5 @@ int ajouter_noeud(t_index * index, t_noeud * noeud);
 //test
 
 //retest
+
+//fait de la merde
