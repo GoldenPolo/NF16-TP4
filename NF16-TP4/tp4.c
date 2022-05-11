@@ -1,29 +1,29 @@
 #include "tp4.h"
 
 
-char * lower_format(char * mot){
+char * lower_format(char * mot){ //met en minuscule
     for ( ; sizeof(mot); ++mot) *mot = tolower(*mot);
 }
 
-int existe_noeud(t_Noeud * noeud, char * mot){
+t_Noeud * rechercher_mot(t_Index * index, char * mot){ //renvoie le mot ou NULL
     mot = lower_format(mot);
-    if (noeud == NULL) {
-        return 0;
+    t_Noeud * noeud = index->racine;
+    while (noeud != NULL) {
+        if (noeud->mot == mot) {
+            return noeud;
+        }
+        else if (noeud->mot < mot) {
+            noeud = noeud->filsDroit;
+        }
+        else {
+            noeud = noeud->filsGauche;
+        }
     }
-    else if (noeud->mot == mot) {
-        return 1;
-    }
-    else if (noeud->mot < mot){
-        return existe_noeud(noeud->filsGauche, mot);
-    }
-    else {
-        return existe_noeud(noeud->filsDroit, mot);
-    }
+    return NULL;
 }
 
 
 int ajouter_noeud(t_Index * index, t_Noeud * noeud){
-    
     if (existe_noeud(index->racine, noeud->mot) == 1) {
         // noeud existe déjà
         return 0;
@@ -34,11 +34,9 @@ int ajouter_noeud(t_Index * index, t_Noeud * noeud){
             index->racine = noeud;
         }
         else {
-            
             t_Noeud * actuel = index->racine;
             t_Noeud * pere = NULL;
             int derniere_action;
-            
             while (actuel != NULL) {
                 if (actuel->mot < noeud->mot) {
                     pere = actuel;
@@ -58,7 +56,6 @@ int ajouter_noeud(t_Index * index, t_Noeud * noeud){
                 pere->filsGauche = noeud;
             }
         }
-        
-        
+        return 1;
     }
 }

@@ -1,1 +1,6 @@
-#include "tp4.c"
+#include "tp4.h"
+
+void main(){
+    
+    
+}
