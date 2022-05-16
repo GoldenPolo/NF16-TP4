@@ -29,11 +29,11 @@ typedef struct t_index {
     int nb_mots_total;
 } t_Index;
 
-t_ListePositions * creer_liste_positions();
+t_ListePositions * creer_liste_positions(void);
 
 int ajouter_position(t_ListePositions * listeP, int ligne, int ordre, int num_phrase);
 
-t_Index * creer_index();
+t_Index * creer_index(void);
 
 t_Noeud * rechercher_mot(t_Index * index, char * mot);
 
@@ -52,5 +52,3 @@ void construire_texte(t_Index * index, char * filename);
 //ajouts
 
 char * lower_format(char * mot);
-
-int existe_noeud(t_Noeud * noeud, char * mot);

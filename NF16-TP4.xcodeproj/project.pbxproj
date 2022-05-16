@@ -24,6 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E23B881F282BABFE00AB1407 /* test.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = test.txt; sourceTree = "<group>"; };
 		E2777FB1282AB16E000F8AF9 /* NF16-TP4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "NF16-TP4"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2777FB4282AB16E000F8AF9 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E2777FBB282AB195000F8AF9 /* tp4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tp4.h; sourceTree = "<group>"; };
@@ -63,6 +64,7 @@
 				E2777FB4282AB16E000F8AF9 /* main.c */,
 				E2777FBB282AB195000F8AF9 /* tp4.h */,
 				E2777FBC282AB1B1000F8AF9 /* tp4.c */,
+				E23B881F282BABFE00AB1407 /* test.txt */,
 			);
 			path = "NF16-TP4";
 			sourceTree = "<group>";
