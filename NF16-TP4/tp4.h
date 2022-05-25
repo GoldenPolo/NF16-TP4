@@ -52,3 +52,5 @@ void construire_texte(t_Index * index, char * filename);
 //ajouts
 
 char * lower_format(char * mot);
+
+void parcours_infixe(t_Noeud * noeud);
