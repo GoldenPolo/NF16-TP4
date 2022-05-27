@@ -58,3 +58,27 @@ t_Index * creer_index() {
     }
 }
 
+void afficher_index(t_Index *index, char *mot_precedent) {
+    if (index != NULL) {
+        t_Noeud *x = index->racine;
+        afficher_index(*(x->filsGauche), x->mot);
+        char *mot = x->mot;
+        char lettre = mot[0];
+        if (mot_precedent[0] != lettre) {
+            strupr(&lettre);
+            printf("|\n\n%c\n", lettre);
+        }
+        char motMaj = lettre;
+        for (int i=1; i< strlen(mot); i++) {
+            motMaj += mot[i];
+        }
+        printf("|-- %s\n", motMaj);
+        t_ListePositions positions = x->positions;
+        t_Position *position = positions.debut;
+        for (int i=0; i < positions.nb_elements; i++) {
+            printf("|---- (l:%i, o:%i, p:%i)\n", position->numero_ligne, position->ordre, position->numero_phrase);
+            position = position->suivant;
+        }
+        afficher_index(*(x->filsDroit), x->mot);
+    }
+}
