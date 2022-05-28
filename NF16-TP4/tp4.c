@@ -9,6 +9,7 @@ t_Index * creer_index(void){
     if (index != NULL) {
         return index;
     } else {
+        free(index);
         return NULL;
     }
 }
@@ -20,6 +21,7 @@ t_ListePositions* creer_liste_positions() {
         return liste;
     }
     else {
+        free(liste);
         return NULL;
     }
 }
@@ -146,8 +148,8 @@ int indexer_fichier(t_Index * index, char * filename){
         //découpage en phrases
         char delim_l[] = ".\n";
         char *ptr_l = strtok(ligne, delim_l);
-        char * phrase= malloc(sizeof(sizeof(char)*TAILLE_MAX));
-        char * mot= malloc(sizeof(phrase));
+        char * phrase = malloc(sizeof(sizeof(char)*TAILLE_MAX));
+        char * mot = malloc(sizeof(phrase));
         while(ptr_l != NULL){
             num_phrase ++;
             phrase = ptr_l;
@@ -195,6 +197,7 @@ int indexer_fichier(t_Index * index, char * filename){
                     // a tester
                     
                     position_mot_precedent = i;
+
                 }
             }
             ptr_l = strtok(NULL, delim_l);
@@ -203,5 +206,44 @@ int indexer_fichier(t_Index * index, char * filename){
     free(ligne);
     fclose(fichier);
     return nb_mots_lus;
+}
+
+void afficher_index(t_Index * index){
+    t_Noeud * tableau[index->nb_mots_differents];
+    t_Noeud * noeud = malloc(sizeof(t_Noeud));
+    noeud = index->racine;
+    parcours_infixe(noeud, tableau, 0);
+    //affichage du tableau
+    char lettre_precedente = '*';
+    for (int i = 0; i<index->nb_mots_differents; i++) {
+        //nouvelle lettre ?
+        if (i == 0 || lettre_precedente != tableau[i]->mot[0]) {
+            lettre_precedente = tableau[i]->mot[0];
+            printf("|\n\n%c\n", lettre_precedente-32);
+        }
+        //affichage du mot
+        tableau[i]->mot[0] = tableau[i]->mot[0]-32;
+        printf("| - - %s\n", tableau[i]->mot);
+        //affichage de ses positions
+        t_Position * position = tableau[i]->positions.debut;
+        while (position != NULL) {
+            printf("| - - - (l:%i, o:%i, p:%i)\n", position->numero_ligne, position->ordre, position->numero_phrase);
+            position = position->suivant;
+        }
+    }
+    free(noeud);
+}
+
+int parcours_infixe(t_Noeud * noeud, t_Noeud * tableau[], int i){
+    // remplit le tableau avec les noeuds triés par ordre alphabetique
+    if (noeud != NULL) {
+        i = parcours_infixe(noeud->filsGauche, tableau, i);
+        //afficher(n)
+        tableau[i] = noeud;
+        i = i+1;
+        i = parcours_infixe(noeud->filsDroit, tableau, i);
+    }
+    
+    return i;
 }
 

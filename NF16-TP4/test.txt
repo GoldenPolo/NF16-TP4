@@ -1,3 +1,3 @@
-Ceci est est un test. Avec plusieurs phrases par lignes
-Je veux que ça me l’affiche.
-Il y a 3 est dans ce fichier.
+Ceci est un test. Avec plusieurs phrases par lignes
+Normalement tout sera trie par ordre alphabetique.
+Inch

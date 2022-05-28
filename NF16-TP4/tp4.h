@@ -53,4 +53,4 @@ void construire_texte(t_Index * index, char * filename);
 
 char * lower_format(char * mot);
 
-void parcours_infixe(t_Noeud * noeud);
+int parcours_infixe(t_Noeud * noeud, t_Noeud * tableau[], int i);
