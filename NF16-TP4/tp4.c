@@ -76,11 +76,13 @@ char * lower_format(char * mot){ //met en minuscule
 
 t_Noeud * rechercher_mot(t_Index * index, char * mot){ //renvoie le noeud ou NULL
     t_Noeud * noeud = index->racine;
+    int compare;
     while (noeud != NULL) {
-        if (strcmp(mot, noeud->mot) == 0) {
+        compare = strcmp(mot, noeud->mot);
+        if (compare == 0) {
             return noeud;
         }
-        else if (strcmp(mot, noeud->mot) > 0) {
+        else if (compare > 0) {
             noeud = noeud->filsDroit;
         }
         else {
@@ -247,3 +249,134 @@ int parcours_infixe(t_Noeud * noeud, t_Noeud * tableau[], int i){
     return i;
 }
 
+void afficher_max_apparition(t_Index * index) {
+    t_Noeud *tableau[index->nb_mots_differents];
+    t_Noeud *noeud = index->racine;
+    parcours_infixe(noeud, tableau, 0);
+    int nb_occurences;
+    int compteur = 0;
+    char *le_mot;
+
+    for (int i=0; i<index->nb_mots_differents; i++) {
+        nb_occurences = tableau[i]->positions.nb_elements;
+        if (nb_occurences > compteur) {
+            compteur = nb_occurences;
+            le_mot = tableau[i]->mot;
+        }
+    }
+
+    printf("\n\nLe mot %s apparait le plus dans le texte : %i fois\n", le_mot, compteur);
+}
+
+void construire_texte(t_Index * index, char * filename){
+    t_Texte_liste * texte = malloc(sizeof(t_Texte_liste));
+    texte->nombre_phrases = 0;
+    //creation d'un tableau comme pour la 7
+    t_Noeud * tableau_t[index->nb_mots_differents];
+    t_Noeud * noeud = malloc(sizeof(t_Noeud));
+    noeud = index->racine;
+    parcours_infixe(noeud, tableau_t, 0);
+    // pour chaque mot de l'index
+    t_Position * position = malloc(sizeof(t_Position));
+    for (int i = 0; i<index->nb_mots_differents; i++) {
+        // pour chaque position de ce mot
+        position = tableau_t[i]->positions.debut;
+        for (int j = 0; j<tableau_t[i]->positions.nb_elements; j++) {
+            //rajoute tous les mots sans les trier
+            
+            rajouter_mot_maillon(texte, tableau_t[i]->mot, position);
+            position = position->suivant;
+        }
+    }
+    tri_texte(texte);
+    free(position);
+    //free(noeud);
+    
+}
+
+void rajouter_mot_maillon(t_Texte_liste * texte, char * mot, t_Position * position){
+    t_Phrase_liste * phrase = texte->debut;
+    t_Phrase_liste * phrase_precedente = NULL;
+    
+    
+    while (phrase->suivant != NULL && phrase->numero_phrase != position->numero_phrase) {
+        phrase_precedente = phrase;
+        phrase = phrase->suivant;
+    }
+    
+    //si premiere fois de la phrase
+    if (phrase == NULL) {
+        t_Phrase_liste * phrase = malloc(sizeof(t_Phrase_liste));
+        phrase->ligne = position->numero_ligne;
+        phrase->nombre_mots = 1;
+        phrase->numero_phrase = position->numero_phrase;
+        phrase->suivant = NULL;
+        t_Mot_maillon * mot_maillon = malloc(sizeof(t_Mot_maillon));
+        mot_maillon->mot = mot;
+        mot_maillon->ordre = position->ordre;
+        mot_maillon->suivant = NULL;
+        phrase->debut = mot_maillon;
+        if (phrase_precedente == NULL) {
+            texte->debut = phrase;
+        } else {
+            phrase_precedente->suivant = phrase;
+        }
+        texte->nombre_phrases++;
+    } else {
+        //sinon
+        
+        t_Mot_maillon * mot_maillon = malloc(sizeof(t_Mot_maillon));
+        mot_maillon = phrase->debut;
+        while (mot_maillon->suivant != NULL) {
+            mot_maillon = mot_maillon->suivant;
+        }
+        t_Mot_maillon * nouveau_mot_maillon = malloc(sizeof(t_Mot_maillon));
+        nouveau_mot_maillon->mot = mot;
+        nouveau_mot_maillon->ordre = position->ordre;
+        nouveau_mot_maillon->suivant = NULL;
+        mot_maillon->suivant = nouveau_mot_maillon;
+    }
+}
+
+void tri_texte(t_Texte_liste * texte){
+    //tri par lignes
+    if (texte->debut->suivant == NULL) {
+        //texte d'un mot
+        return;
+    }
+    t_Phrase_liste * phrase_precedente = NULL;
+    t_Phrase_liste * phrase_actuelle = texte->debut;
+    t_Phrase_liste * phrase_suivante = texte->debut->suivant;
+    for (int i =0; i<texte->nombre_phrases; i++) {
+        
+        for (int j=0; j<texte->nombre_phrases; j++) {
+            while (phrase_suivante != NULL) {
+                
+                if (phrase_actuelle->ligne > phrase_suivante->ligne) {
+                    if (phrase_precedente != NULL) {
+                        phrase_precedente->suivant = phrase_suivante;
+                    }
+                    phrase_actuelle->suivant = phrase_suivante->suivant;
+                    
+                    phrase_suivante->suivant = phrase_actuelle;
+                    //passage aux suivants spécial
+                    
+                    phrase_precedente = phrase_suivante;
+                    
+                    phrase_suivante = phrase_actuelle->suivant;
+                    
+                } else {
+                //passage normal
+                phrase_precedente = phrase_actuelle;
+                phrase_actuelle = phrase_suivante;
+                phrase_suivante = phrase_suivante->suivant;
+                }
+            }
+        }
+    }
+    
+    //tri par phrases
+    
+    
+    //tri par mots
+}
