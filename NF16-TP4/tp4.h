@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#define TAILLE_MAX 1000
 
 typedef struct t_position {
     int numero_ligne;
@@ -79,3 +80,42 @@ typedef struct t_texte_liste {
 void rajouter_mot_maillon(t_Texte_liste * texte, char * mot, t_Position * position);
 
 void tri_texte(t_Texte_liste * texte);
+
+int maximum(int a, int b);
+
+int hauteur(t_Noeud *noeud);
+
+typedef struct t_pile {
+    t_Noeud * tableau[TAILLE_MAX];
+    int sommet;
+} t_Pile;
+
+typedef struct t_MotPhrase {
+    char * mot;
+    int ordre;
+    struct t_MotPhrase * suivant;
+} t_MotPhrase;
+
+typedef struct t_Phrase {
+    t_MotPhrase * debut;
+    struct t_Phrase * suivant;
+    int nb_elements;
+} t_Phrase;
+
+t_Pile * creer_pile(void);
+
+int pile_vide(t_Pile * pile);
+
+int pile_pleine(t_Pile * pile);
+
+int empiler(t_Pile * pile, t_Noeud * noeud);
+
+t_Noeud * depiler(t_Pile * pile);
+
+t_MotPhrase * creer_mot_phrase(void);
+
+t_Phrase * creer_phrase(void);
+
+void ajout_mot_dans_phrase(t_Phrase * phrase, int ordre, char * mot);
+
+void afficher_phrase(t_Phrase * phrase);

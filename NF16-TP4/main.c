@@ -28,8 +28,14 @@ void main(){
                     printf("\nAucun fichier n'est indexe.\n");
                     break;
                 }
-                printf("Nombre de mots dans l'index : %i\nDont %i mots differents", index->nb_mots_total, index->nb_mots_differents);
+                printf("Nombre de mots dans l'index : %i\nDont %i mots differents\n", index->nb_mots_total, index->nb_mots_differents);
                 //faire equilibre !!!!
+                int delta = (hauteur(index->racine->filsDroit) - hauteur(index->racine->filsGauche));
+                if (delta < -1 || delta > 1){
+                    printf("L'index n'est pas equilibre (delta = %i).\n", delta);
+                } else {
+                    printf("L'index est equilibre (delta = %i).\n", delta);
+                }
                 break;
             case 3:
                 if (a_indexe == 0) {
@@ -69,9 +75,10 @@ void main(){
                     printf("\nAucun fichier n'est indexe.\n");
                     break;
                 }
-                printf("\nEntrer le mot:");
+                printf("\nEntrer le mot a chercher : ");
                 char * entree;
                 scanf("%s", entree);
+                printf("\nMot = \"%s\"\n", entree);
                 afficher_occurences_mot(index, entree);
                 break;
             case 7:
@@ -79,11 +86,10 @@ void main(){
                     printf("\nAucun fichier n'est indexe.\n");
                     break;
                 }
-                printf("\nNom du fichier dans lequel enregistrer le texte:");
+                printf("\nNom du fichier dans lequel enregistrer le texte : ");
                 char filename;
                 scanf("%s", &filename);
-                // "C:\\Users\\alexa\\Documents\\UTC\\TC03 - P22\\NF16\\TP\\TP4\\TP4\\"
-                //construire_texte(index, &filename);
+                construire_texte(index, "/Users/pol/Desktop/UTC/TC04/NF16/Algos/NF16/NF16-TP4/NF16-TP4/sortie.txt");
                 break;
             case 8:
                 printf("\nFermeture du programme");

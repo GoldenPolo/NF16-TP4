@@ -219,9 +219,9 @@ void afficher_index(t_Index * index){
     parcours_infixe(noeud, tableau, 0);
     //affichage du tableau
     char lettre_precedente = '*';
-    for (int i = 0; i<index->nb_mots_differents; i++) {
+    for (int i = 0; i<index->nb_mots_differents; i++){
         //nouvelle lettre ?
-        if (i == 0 || lettre_precedente != tableau[i]->mot[0]) {
+        if (i == 0 || lettre_precedente != tableau[i]->mot[0]){
             lettre_precedente = tableau[i]->mot[0];
             printf("|\n\n%c\n", lettre_precedente-32);
         }
@@ -270,6 +270,7 @@ void afficher_max_apparition(t_Index * index) {
     printf("\n\nLe mot %s apparait le plus dans le texte : %i fois\n", le_mot, compteur);
 }
 
+/*
 void afficher_occurences_mot(t_Index * index, char * mot){
     return;
 }
@@ -385,4 +386,194 @@ void tri_texte(t_Texte_liste * texte){
     
     
     //tri par mots
+}
+*/
+
+int maximum(int a, int b){
+    if (a<b) return b;
+    else return a;
+}
+
+int hauteur(t_Noeud *noeud){
+    if (noeud == NULL) return 0;
+    else {
+        return 1 + maximum(hauteur(noeud->filsGauche), hauteur(noeud->filsDroit));
+    }
+}
+
+//dernieres questions
+
+//rajout des structures de pile et de phrases
+
+t_Pile * creer_pile(void){
+    t_Pile * pile = malloc(sizeof(t_Pile));
+    pile->sommet = -1;
+    return pile;
+}
+
+int pile_vide(t_Pile * pile){
+    return (pile->sommet == -1);
+}
+
+int pile_pleine(t_Pile * pile){
+    return (pile->sommet == TAILLE_MAX - 1);
+}
+
+int empiler(t_Pile * pile, t_Noeud * noeud){
+    if (pile_pleine(pile)) return -1;
+    else {
+        pile->tableau[pile->sommet] = noeud;
+        pile->sommet++;
+        return pile->sommet;
+    }
+}
+
+t_Noeud * depiler(t_Pile * pile){
+    if (pile_vide(pile)) return NULL;
+    else {
+        t_Noeud * noeud = malloc(sizeof(t_Noeud));
+        noeud = pile->tableau[pile->sommet];
+        pile->sommet=pile->sommet-1;
+        return noeud;
+    }
+}
+
+t_MotPhrase * creer_mot_phrase(void){
+    t_MotPhrase * mot = malloc(sizeof(t_MotPhrase));
+    return mot;
+}
+
+t_Phrase * creer_phrase(void){
+    t_Phrase * phrase = malloc(sizeof(t_Phrase));
+    phrase->debut = NULL;
+    phrase->nb_elements = 0;
+    phrase->suivant=NULL;
+    return phrase;
+}
+
+void ajout_mot_dans_phrase(t_Phrase * phrase, int ordre, char * mot){
+    t_MotPhrase * parcourir = phrase->debut;
+    t_MotPhrase * precedent = NULL;
+    t_MotPhrase * nouveau_mot = creer_mot_phrase();
+    nouveau_mot->ordre = ordre;
+    nouveau_mot->mot = mot;
+
+    while (parcourir != NULL && parcourir->ordre < ordre){ //recherche
+        precedent = parcourir;
+        parcourir = parcourir->suivant;
+    }
+    if (precedent==NULL){ //insertion
+        nouveau_mot->suivant = phrase->debut;
+        phrase->debut = nouveau_mot;
+    } else {
+        nouveau_mot->suivant = parcourir;
+        precedent->suivant=nouveau_mot;
+    }
+    phrase->nb_elements ++;
+}
+
+void afficher_phrase(t_Phrase * phrase){
+    t_MotPhrase * mot_de_parcours = malloc(sizeof(t_MotPhrase));
+    mot_de_parcours = phrase->debut;
+    while(mot_de_parcours != NULL){
+        printf(" %s", mot_de_parcours->mot);
+        mot_de_parcours = mot_de_parcours->suivant;
+    }
+}
+
+void afficher_occurences_mot(t_Index * index, char * mot){
+    t_Noeud * noeud_de_parcours = malloc(sizeof(t_Noeud));
+    t_Noeud * noeud_cherche = rechercher_mot(index,mot);
+    t_Position * positions_du_noeud = NULL;
+    t_Pile * pile_noeud = creer_pile();
+
+    if (noeud_cherche != NULL) {
+        printf("Occurences : %i\n", noeud_cherche->positions.nb_elements);
+        t_Position * positions_mot_ref = malloc(sizeof(t_Position));
+        positions_mot_ref = noeud_cherche->positions.debut;
+
+        while (positions_mot_ref != NULL) { //chaque position est comparee
+            noeud_de_parcours = index->racine;
+            t_Phrase * phrase = creer_phrase();
+            
+            while (noeud_de_parcours != NULL || pile_vide(pile_noeud) != 1){ //parcours de l'arbre
+                while (noeud_de_parcours != NULL){
+                    empiler(pile_noeud, noeud_de_parcours);
+                    noeud_de_parcours = noeud_de_parcours->filsGauche;
+                }
+                noeud_de_parcours = depiler(pile_noeud);
+                positions_du_noeud = noeud_de_parcours->positions.debut;
+
+                while (positions_du_noeud != NULL){ //parcours des positions
+                    if (positions_du_noeud->numero_phrase == positions_mot_ref->numero_phrase){
+                        ajout_mot_dans_phrase(phrase, positions_du_noeud->ordre, noeud_de_parcours->mot);
+                    }
+                    positions_du_noeud=positions_du_noeud->suivant;
+                }
+                noeud_de_parcours=noeud_de_parcours->filsDroit;
+            }
+            
+            printf("| Ligne %d, mot %d : ", positions_mot_ref->numero_ligne, positions_mot_ref->ordre);
+            afficher_phrase(phrase);
+            printf("\n");
+            positions_mot_ref = positions_mot_ref->suivant;
+            free(phrase);
+        }
+    } else {
+        printf("Mot introuvable.\n");
+    }
+}
+
+void construire_texte(t_Index * index, char * filename){
+    FILE * file = fopen(filename, "w");
+    
+    int nb_phrase = 1;
+    int taille_phrase = 0;
+    
+    t_Noeud * noeud_de_parcours;
+    t_Position * positions_du_noeud = NULL;
+    t_Pile * pile_noeud = creer_pile();
+    t_Phrase * phrase = creer_phrase();
+    
+    while (taille_phrase != 0 || nb_phrase == 1){ //chaque position est comparee
+        noeud_de_parcours = index->racine;
+        phrase = creer_phrase();
+        while (noeud_de_parcours != NULL || pile_vide(pile_noeud) !=1){ //parcours de l'arbre
+            while (noeud_de_parcours!=NULL){
+                empiler(pile_noeud, noeud_de_parcours);
+                noeud_de_parcours = noeud_de_parcours->filsGauche;
+            }
+            noeud_de_parcours = depiler(pile_noeud);
+            positions_du_noeud = noeud_de_parcours->positions.debut;
+            while(positions_du_noeud != NULL){ //parcours des positions
+                if(positions_du_noeud->numero_phrase == nb_phrase){
+                    ajout_mot_dans_phrase(phrase, positions_du_noeud->ordre, noeud_de_parcours->mot);
+                }
+                positions_du_noeud=positions_du_noeud->suivant;
+            }
+            noeud_de_parcours=noeud_de_parcours->filsDroit;
+        }
+        fprintf(file, "\n");
+        nb_phrase++;
+        taille_phrase = phrase->nb_elements;
+        free(phrase);
+        //ecriture dans le fichier
+        t_MotPhrase * mot = phrase->debut;
+        if (taille_phrase != 0){
+            while(mot != NULL){
+                if (phrase->debut == mot){
+                    mot->mot[0] = mot->mot[0]-32;
+                    fprintf(file,"%s", mot->mot);
+                }
+                else if (mot->suivant == NULL){
+                    fprintf(file," %s.", mot->mot);
+                } else {
+                    fprintf(file," %s", mot->mot);
+                }
+                mot = mot->suivant;
+            }
+        }
+    }
+    fclose(file);
+    printf("Fichier cree !.\n");
 }
