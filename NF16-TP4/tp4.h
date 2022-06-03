@@ -4,6 +4,8 @@
 #include <ctype.h>
 #define TAILLE_MAX 1000
 
+
+
 typedef struct t_position {
     int numero_ligne;
     int ordre;

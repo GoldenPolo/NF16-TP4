@@ -2,6 +2,7 @@
 #define TAILLE_MAX 1000
 
 
+
 t_Index * creer_index(void){
     //cree un index vide et le renvoie
     t_Index * index = malloc(sizeof(t_Index));

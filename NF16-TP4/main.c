@@ -1,5 +1,7 @@
 #include "tp4.h"
 
+
+
 int main(){
     int test = 1;
     t_Index *index = creer_index();
