@@ -1,6 +1,6 @@
 #include "tp4.h"
 
-void main(){
+int main(){
     int test = 1;
     t_Index *index = creer_index();
     int a_indexe = 0;
@@ -15,11 +15,10 @@ void main(){
 
         switch (choix) {
             case 1:
-                //printf("\nNom du fichier:");
-                //char nom_fichier;
-                //scanf("%s", &nom_fichier);
-                // "C:\\Users\\alexa\\Documents\\UTC\\TC03 - P22\\NF16\\TP\\TP4\\TP4\\";
-                indexer_fichier(index, "/Users/pol/Desktop/UTC/TC04/NF16/Algos/NF16/NF16-TP4/NF16-TP4/test.txt");
+                printf("\nNom du fichier : ");
+                char * nom_fichier;
+                scanf("%s", nom_fichier);
+                indexer_fichier(index, nom_fichier);
                 a_indexe = 1;
                 printf("Nombre de mots indexes : %i\nDont %i mots differents", index->nb_mots_total, index->nb_mots_differents);
                 break;
@@ -29,7 +28,6 @@ void main(){
                     break;
                 }
                 printf("Nombre de mots dans l'index : %i\nDont %i mots differents\n", index->nb_mots_total, index->nb_mots_differents);
-                //faire equilibre !!!!
                 int delta = (hauteur(index->racine->filsDroit) - hauteur(index->racine->filsGauche));
                 if (delta < -1 || delta > 1){
                     printf("L'index n'est pas equilibre (delta = %i).\n", delta);
@@ -39,9 +37,9 @@ void main(){
                 break;
             case 3:
                 if (a_indexe == 0) {
-                printf("\nAucun fichier n'est indexe.\n");
-                break;
-            }
+                    printf("\nAucun fichier n'est indexe.\n");
+                    break;
+                }
                 afficher_index(index);
                 break;
             case 4:
@@ -86,9 +84,6 @@ void main(){
                     printf("\nAucun fichier n'est indexe.\n");
                     break;
                 }
-                printf("\nNom du fichier dans lequel enregistrer le texte : ");
-                char filename;
-                scanf("%s", &filename);
                 construire_texte(index, "/Users/pol/Desktop/UTC/TC04/NF16/Algos/NF16/NF16-TP4/NF16-TP4/sortie.txt");
                 break;
             case 8:
@@ -99,4 +94,5 @@ void main(){
                 break;
         }
     }
+    return 1;
 }

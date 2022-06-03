@@ -53,10 +53,6 @@ void construire_texte(t_Index * index, char * filename);
 
 //ajouts
 
-char * lower_format(char * mot);
-
-int parcours_infixe(t_Noeud * noeud, t_Noeud * tableau[], int i);
-
 typedef struct t_mot_maillon {
     char * mot;
     int ordre;
@@ -76,10 +72,9 @@ typedef struct t_texte_liste {
     int nombre_phrases;
 } t_Texte_liste;
 
+char * lower_format(char * mot);
 
-void rajouter_mot_maillon(t_Texte_liste * texte, char * mot, t_Position * position);
-
-void tri_texte(t_Texte_liste * texte);
+int parcours_infixe(t_Noeud * noeud, t_Noeud * tableau[], int i);
 
 int maximum(int a, int b);
 
